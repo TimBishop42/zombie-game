@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!--
+    AbbreviationAsWordInName misfires on natural test method names where an article
+    ("A"/"An") is immediately followed by a capitalized word (e.g. "movesToANewPosition"),
+    which it reads as a 2-consecutive-capital abbreviation. Real abbreviation issues (e.g.
+    "XMLParser") still apply to production code; this only relaxes test naming.
+-->
+<suppressions>
+    <suppress checks="AbbreviationAsWordInName" files="[\\/]src[\\/]test[\\/]"/>
+</suppressions>

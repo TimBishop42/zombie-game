@@ -80,11 +80,16 @@ concerns from leaking into game rules.
 
 ## 3. Domain model
 
-- **`Actor`** — sealed abstract class, `permits Scientist, PoliceOfficer,
-  Zombie`. Holds id, `Coordinate` position, alive/state, and (for humans) a
-  carried `ResourceNode` reference. `Zombie` additionally holds chase state:
-  a nullable locked target actor id and remaining chase distance (see
+- **`Actor`** — sealed abstract class, `permits Human, Zombie`. Holds id,
+  `Coordinate` position, and alive/state. `Human` (sealed abstract,
+  `permits Scientist, PoliceOfficer`) adds the carried-`ResourceNode`
+  state/behavior shared by both human subtypes, so it's implemented once
+  rather than duplicated. `Zombie` holds its own chase state instead: an
+  optional locked target actor id and remaining chase distance (see
   `MovementStrategy` below) — state specific to that subtype, not shared.
+  This is a two-level sealed hierarchy, not a flat three-way one — the
+  `InteractionResolver`'s pattern-matching `switch` (below) accounts for
+  this nesting.
 - **`Coordinate(int x, int y)`** — record, used directly as a map key.
 - **`Grid`** — sparse `Map<Coordinate, Cell>`; a `Cell` may hold a
   `ResourceNode`. Chosen over a dense 2D array so memory scales with occupied
@@ -146,7 +151,7 @@ where randomness is involved:
 | `resourceNodeCount` | 15 |
 | `scientistCount` / `policeCount` | 5 / 5 |
 | `initialZombieCount` | 3 |
-| `movementRange` (per actor type) | 1 |
+| `humanMovementRange` / `zombieMovementRange` | 1 / 1 |
 | `humanSensingRadius` | 3 |
 | `zombieLockOnRadius` | 3 |
 | `zombieChaseDistance` | 5 |
@@ -278,7 +283,7 @@ Each step is one commit, per the per-step development workflow in
 
 | Step | Description | Status | Commit |
 |---|---|---|---|
-| 1 | Gradle scaffold, Checkstyle, justfile | Not started | |
+| 1 | Gradle scaffold, Checkstyle, justfile | Done | e9f785f |
 | 2 | Core types | Not started | |
 | 3 | Initial placement | Not started | |
 | 4 | SpatialIndex + MovementStrategy | Not started | |

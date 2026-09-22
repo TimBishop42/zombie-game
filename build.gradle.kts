@@ -26,6 +26,10 @@ dependencies {
 checkstyle {
     toolVersion = "10.26.1"
     configFile = file("config/checkstyle/checkstyle.xml")
+    configProperties = mapOf(
+        "org.checkstyle.google.suppressionfilter.config" to
+            file("config/checkstyle/checkstyle-suppressions.xml").absolutePath
+    )
     maxWarnings = 0
 }
 

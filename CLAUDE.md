@@ -80,10 +80,13 @@ No step starts before the previous one is committed.
 ## Technical architecture decisions
 
 - **Interaction dispatch:** actor-vs-actor encounters are resolved via sealed
-  types (`Actor permits Scientist, PoliceOfficer, Zombie`) and pattern-matching
-  `switch`, not a classic Visitor. This gives compiler-enforced exhaustiveness
-  when a new actor type is added, with far less boilerplate than accept/visit
-  methods.
+  types (`Actor permits Human, Zombie`; `Human permits Scientist,
+  PoliceOfficer`) and pattern-matching `switch`, not a classic Visitor. This
+  gives compiler-enforced exhaustiveness when a new actor type is added, with
+  far less boilerplate than accept/visit methods. The hierarchy is two levels
+  deep rather than a flat three-way `permits` — `Human` exists to hold the
+  carried-resource state/behavior shared by `Scientist` and `PoliceOfficer`
+  once, instead of duplicating it.
 - **Team relationship is swappable:** Police-vs-Scientist behavior is chosen via
   an `InteractionPolicy` strategy (starting with an independent-teams policy),
   so it can later be swapped for an adversarial policy without touching engine
